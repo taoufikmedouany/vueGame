@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Vue Game</title>
+	<style type="text/css">
+		body {
+			text-align: center;
+		}
+		.col {
+			display: flex;
+			margin: auto;
+			width: calc(34px * 10);
+		}
+		.cell {
+			width: 32px;
+			height: 32px;
+			line-height: 32px;
+			border: 1px solid #333;
+			text-align: center;
+		}
+		.control_btn {
+			width: 50px;
+			height: 30px;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div>Steps : {{ steps }}</div>
+		<div v-for="col in cols" :key="col" class="col">
+			<div v-for="cell in cells" :key="cell" class="cell">
+				<img v-if="cell == playerX && col == playerY" src="mario.png" align="M">
+				<img v-if="flowers.includes(cell+','+col)" src="flower.png" align="f">
+			</div>
+		</div>
+		<br />
+		<div>
+			<div>
+				<button @click.prevent="handleTopClick" class="control_btn">↑</button>
+			</div>
+			<div>
+				<button @click.prevent="handleLeftClick" class="control_btn">←</button>
+				<button @click.prevent="handleRightClick" class="control_btn">→</button>
+			</div>
+			<div>
+				<button @click.prevent="handleBottomClick" class="control_btn">↓</button>
+			</div>
+		</div>
+	</div>
+
+<script src="vue.js"></script>
+<script type="text/javascript">
+	var app = new Vue({
+		el: '#app',
+		data: {
+			steps: 0,
+			cols: 0,
+			cells: 0,
+			playerX: null,
+			playerY: null,
+			flowers: [],
+		},
+		mounted() {
+			this.initGame();
+		},
+		methods: {
+			initGame() {
+				// reset steps
+				this.steps = 0;
+				if(!this.cols || !this.cells) {
+					// create board
+					// this.cols = parseInt(window.prompt('Please enter board Width', 10)) || 10;
+					// this.cells = parseInt(window.prompt('Please enter board Height', 10)) || 10;
+					this.cols = 10;
+					this.cells = 10;
+				}
+				// place player
+				this.playerX = this.randNumber(1, this.cells);
+				this.playerY = this.randNumber(1, this.cols);
+				// place flowers
+				this.flowers = [];
+				for (let i = 1; i <= 10; i++) {
+					this.flowers.push(this.randNumber(1, this.cells)+','+this.randNumber(1, this.cols));
+				}
+				this.removeActiveFlower();
+			},
+			handleArrowClick(e) {
+				if(e.keyCode == 37) {
+					this.handleLeftClick();
+				} else if (e.keyCode == 38) {
+					this.handleTopClick();
+				} else if (e.keyCode == 39) {
+					this.handleRightClick();
+				} else if (e.keyCode == 40) {
+					this.handleBottomClick();
+				}
+			},
+			removeFlower(flower) {
+				const index = this.flowers.indexOf(flower);
+				if (index > -1) {
+				  this.flowers.splice(index, 1);
+				}
+			},
+			removeActiveFlower() {
+				this.removeFlower(this.playerX+","+this.playerY);
+			},
+			checkEmptyFlowers() {
+				if(this.flowers.length == 0) {
+					setTimeout(() => {
+						alert('Game over. Total moves : ' + this.steps);
+						this.initGame();
+					}, 1);
+				}
+			},
+			randNumber(min, max) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			},
+			incrementSteps() {
+				this.steps++;
+			},
+			handleLeftClick() {
+				this.incrementSteps();
+				this.playerX--;
+				if(this.playerX == 0) {
+					this.playerX = this.cols;
+				}
+				this.removeActiveFlower();
+				this.checkEmptyFlowers();
+			},
+			handleTopClick() {
+				this.incrementSteps();
+				this.playerY--;
+				if(this.playerY == 0) {
+					this.playerY = this.cols;
+				}
+				this.removeActiveFlower();
+				this.checkEmptyFlowers();
+
+			},
+			handleBottomClick() {
+				this.incrementSteps();
+				this.playerY++;
+				if(this.playerY > this.cols) {
+					this.playerY = 1;
+				}
+				this.removeActiveFlower();
+				this.checkEmptyFlowers();
+			},
+			handleRightClick() {
+				this.incrementSteps();
+				this.playerX++;
+				if(this.playerX > this.cols) {
+					this.playerX = 1;
+				}
+				this.removeActiveFlower();
+				this.checkEmptyFlowers();
+			},
+		}
+	});
+	window.addEventListener('keydown', function(e) {
+	    app.handleArrowClick(e);
+	});
+</script>
+</body>
+</html>
