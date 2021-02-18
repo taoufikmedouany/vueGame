@@ -2,7 +2,9 @@
 <html>
 <head>
 	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Vue Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		body {
 			text-align: center;
@@ -30,8 +32,8 @@
 		<div>Steps : {{ steps }}</div>
 		<div v-for="col in cols" :key="col" class="col">
 			<div v-for="cell in cells" :key="cell" class="cell">
-				<img v-if="cell == playerX && col == playerY" src="mario.png" align="M">
-				<img v-if="flowers.includes(cell+','+col)" src="flower.png" align="f">
+				<img v-if="cell == playerX && col == playerY" src="mario.png" alt="M">
+				<img v-if="flowers.includes(cell+','+col)" src="flower.png" alt="f">
 			</div>
 		</div>
 		<br />
@@ -49,7 +51,7 @@
 		</div>
 	</div>
 
-<script src="vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script type="text/javascript">
 	var app = new Vue({
 		el: '#app',
@@ -68,8 +70,8 @@
 			initGame() {
 				// reset steps
 				this.steps = 0;
+				// create board
 				if(!this.cols || !this.cells) {
-					// create board
 					// this.cols = parseInt(window.prompt('Please enter board Width', 10)) || 10;
 					// this.cells = parseInt(window.prompt('Please enter board Height', 10)) || 10;
 					this.cols = 10;
@@ -80,10 +82,12 @@
 				this.playerY = this.randNumber(1, this.cols);
 				// place flowers
 				this.flowers = [];
-				for (let i = 1; i <= 10; i++) {
-					this.flowers.push(this.randNumber(1, this.cells)+','+this.randNumber(1, this.cols));
+				while (this.flowers.length < 10) {
+					let p = this.randNumber(1, this.cells)+','+this.randNumber(1, this.cols);
+					if (![...this.flowers, this.playerX+','+this.playerY].includes(p)) {
+						this.flowers.push(p);
+					}
 				}
-				this.removeActiveFlower();
 			},
 			handleArrowClick(e) {
 				if(e.keyCode == 37) {
