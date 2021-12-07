@@ -55,13 +55,15 @@
 <script type="text/javascript">
 	var app = new Vue({
 		el: '#app',
-		data: {
-			steps: 0,
-			cols: 0,
-			cells: 0,
-			playerX: null,
-			playerY: null,
-			flowers: [],
+		data() {
+			return {
+				steps: 0,
+				cols: 0,
+				cells: 0,
+				playerX: null,
+				playerY: null,
+				flowers: [],
+			}
 		},
 		mounted() {
 			this.initGame();
